@@ -42,6 +42,7 @@ import (
 	"google.golang.org/grpc/credentials"
 
 	registryapi "github.com/networkservicemesh/api/pkg/api/registry"
+	"github.com/networkservicemesh/cmd-forwarder-vpp/internal/vppinit"
 	"github.com/networkservicemesh/sdk-vpp/pkg/networkservice/chains/xconnectns"
 	"github.com/networkservicemesh/sdk/pkg/networkservice/common/authorize"
 	registrysendfd "github.com/networkservicemesh/sdk/pkg/registry/common/sendfd"
@@ -155,6 +156,7 @@ func main() {
 		&config.ConnectTo,
 		vppConn,
 		memifSocketDir,
+		vppinit.Must(vppinit.LinkToAfPacket(ctx, vppConn, config.TunnelIP)),
 		grpc.WithTransportCredentials(grpcfd.TransportCredentials(credentials.NewTLS(tlsconfig.MTLSClientConfig(source, source, tlsconfig.AuthorizeAny())))),
 		grpc.WithDefaultCallOptions(grpc.WaitForReady(true)),
 	)
